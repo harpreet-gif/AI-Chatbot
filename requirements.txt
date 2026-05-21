@@ -1,0 +1,6 @@
+streamlit
+openai
+python-dotenv
+speechrecognition
+pypdf2
+streamlit-mic-recorder
