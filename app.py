@@ -93,10 +93,14 @@ with st.sidebar:
     st.subheader("🎤 Voice Input")
 
     if st.button("Start Speaking"):
-        try:
-            recognizer = sr.Recognizer()
 
-    
+    try:
+        import speech_recognition as sr
+
+        recognizer = sr.Recognizer()
+
+        st.warning("🎤 Voice input works only on local system (not Streamlit Cloud).")
+
         with sr.Microphone() as source:
             st.info("Listening...")
             audio = recognizer.listen(source)
@@ -108,8 +112,8 @@ with st.sidebar:
             {"role": "user", "content": text}
         )
 
-    except Exception:
-        st.warning("🎤 Voice input works only in local system (not on Streamlit Cloud).")
+    except Exception as e:
+        st.error("Voice input not supported or failed on Streamlit Cloud.")
 
     st.markdown("---")
 
