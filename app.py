@@ -90,28 +90,24 @@ with st.sidebar:
     st.markdown("---")
 
     # VOICE INPUT
-st.subheader("🎤 Voice Input")
+    st.subheader("🎤 Voice Input")
 
-if st.button("Start Speaking"):
+    if st.button("Start Speaking"):
+        recognizer = sr.Recognizer()
 
-    st.warning("🎤 Voice input is not supported on Streamlit Cloud.")
+        st.warning("🎤 Voice input is not supported in Streamlit Cloud. Use local app for speech input.")
 
-    # Local system only
-    # Uncomment below if running locally
+        try:
+            text = recognizer.recognize_google(audio)
+            st.success(text)
 
-    # recognizer = sr.Recognizer()
+            st.session_state.chats[st.session_state.active_chat].append(
+                {"role": "user", "content": text}
+            )
 
-    # with sr.Microphone() as source:
-    #     st.info("Listening...")
-    #     audio = recognizer.listen(source)
+        except:
+            st.error("Could not recognize speech")
 
-    # text = recognizer.recognize_google(audio)
-
-    # st.success(text)
-
-    # st.session_state.chats[st.session_state.active_chat].append(
-    #     {"role": "user", "content": text}
-    # )
     st.markdown("---")
 
     # PDF UPLOAD
