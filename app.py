@@ -93,10 +93,10 @@ with st.sidebar:
     st.subheader("🎤 Voice Input")
 
     if st.button("Start Speaking"):
+        try:
+            recognizer = sr.Recognizer()
 
-try:
-        recognizer = sr.Recognizer()
-
+    
         with sr.Microphone() as source:
             st.info("Listening...")
             audio = recognizer.listen(source)
