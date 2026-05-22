@@ -250,7 +250,7 @@ st.markdown('<div class="chat-box">', unsafe_allow_html=True)
 
 for msg in st.session_state.chats[st.session_state.active_chat]:
     if not isinstance(msg, dict) or msg.get("role") == "system":
-    continue
+        continue
 
     if msg["role"] == "user":
         st.markdown(f"<div class='user-msg'>🧑 {msg['content']}</div>", unsafe_allow_html=True)
