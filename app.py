@@ -93,9 +93,8 @@ with st.sidebar:
     st.subheader("🎤 Voice Input")
 
     if st.button("Start Speaking"):
-
-    try:
-        import speech_recognition as sr
+        try:
+            import speech_recognition as sr
 
         recognizer = sr.Recognizer()
 
