@@ -94,7 +94,7 @@ with st.sidebar:
 
     if st.button("Start Speaking"):
 
-    try:
+try:
         recognizer = sr.Recognizer()
 
         with sr.Microphone() as source:
