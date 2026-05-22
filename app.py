@@ -240,42 +240,18 @@ st.title("🤖 AI Chatbot")
 
 
 # =========================
-# CHAT DISPLAY (SAFE VERSION)
+# CHAT DISPLAY
 # =========================
-
 st.markdown('<div class="chat-box">', unsafe_allow_html=True)
 
-# safety check
-if (
-    st.session_state.active_chat
-    and st.session_state.active_chat in st.session_state.chats
-):
+for msg in st.session_state.chats[st.session_state.active_chat]:
+    if msg["role"] == "system":
+        continue
 
-    chat_data = st.session_state.chats[st.session_state.active_chat]
-    messages = chat_data.get("messages", [])
-
-    for msg in messages:
-
-        # extra safety check
-        if not isinstance(msg, dict):
-            continue
-
-        role = msg.get("role", "")
-        content = msg.get("content", "")
-
-        if role == "system":
-            continue
-
-        if role == "user":
-            st.markdown(
-                f"<div class='user-msg'>🧑 {content}</div>",
-                unsafe_allow_html=True
-            )
-        else:
-            st.markdown(
-                f"<div class='bot-msg'>🤖 {content}</div>",
-                unsafe_allow_html=True
-            )
+    if msg["role"] == "user":
+        st.markdown(f"<div class='user-msg'>🧑 {msg['content']}</div>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<div class='bot-msg'>🤖 {msg['content']}</div>", unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
