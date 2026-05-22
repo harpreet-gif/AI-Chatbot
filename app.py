@@ -93,20 +93,23 @@ with st.sidebar:
     st.subheader("🎤 Voice Input")
 
     if st.button("Start Speaking"):
+
+    try:
         recognizer = sr.Recognizer()
 
-        st.warning("🎤 Voice input is not supported in Streamlit Cloud. Use local app for speech input.")
+        with sr.Microphone() as source:
+            st.info("Listening...")
+            audio = recognizer.listen(source)
 
-        try:
-            text = recognizer.recognize_google(audio)
-            st.success(text)
+        text = recognizer.recognize_google(audio)
+        st.success(text)
 
-            st.session_state.chats[st.session_state.active_chat].append(
-                {"role": "user", "content": text}
-            )
+        st.session_state.chats[st.session_state.active_chat].append(
+            {"role": "user", "content": text}
+        )
 
-        except:
-            st.error("Could not recognize speech")
+    except Exception:
+        st.warning("🎤 Voice input works only in local system (not on Streamlit Cloud).")
 
     st.markdown("---")
 
