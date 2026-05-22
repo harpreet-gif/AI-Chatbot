@@ -27,10 +27,9 @@ st.set_page_config(
 )
 
 # =========================
-# SESSION STATE
+# SESSION STATE INIT
 # =========================
 if "chats" not in st.session_state:
-    # chat_id -> {title, messages}
     st.session_state.chats = {}
 
 if "active_chat" not in st.session_state:
@@ -38,6 +37,16 @@ if "active_chat" not in st.session_state:
 
 if "theme" not in st.session_state:
     st.session_state.theme = "light"
+
+
+# =========================
+# FIX OLD FORMAT (IMPORTANT)
+# =========================
+if st.session_state.chats:
+    first_value = next(iter(st.session_state.chats.values()))
+    if isinstance(first_value, list):  # old format detected
+        st.session_state.chats = {}
+        st.session_state.active_chat = None
 
 
 # =========================
@@ -56,7 +65,6 @@ def create_new_chat():
     st.session_state.active_chat = chat_id
 
 
-# initialize first chat
 if not st.session_state.chats:
     create_new_chat()
 
@@ -65,7 +73,13 @@ if not st.session_state.chats:
 # AUTO TITLE GENERATOR
 # =========================
 def generate_title(text):
-    return text[:30] + "..." if len(text) > 30 else text
+    return text[:35] + "..." if len(text) > 35 else text
+
+
+# =========================
+# GET ACTIVE CHAT
+# =========================
+chat = st.session_state.chats[st.session_state.active_chat]["messages"]
 
 
 # =========================
@@ -81,9 +95,12 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # SHOW CHAT TITLES (NOT Chat 1, Chat 2)
+    # CHAT LIST (SAFE)
     for chat_id, chat_data in st.session_state.chats.items():
-        if st.button(chat_data["title"]):
+
+        title = chat_data.get("title", "Untitled Chat")
+
+        if st.button(title):
             st.session_state.active_chat = chat_id
             st.rerun()
 
@@ -114,8 +131,6 @@ with st.sidebar:
         try:
             text = recognizer.recognize_google(audio)
             st.success(text)
-
-            chat = st.session_state.chats[st.session_state.active_chat]["messages"]
 
             chat.append({"role": "user", "content": text})
 
@@ -166,12 +181,6 @@ st.title("🤖 AI Chatbot")
 
 
 # =========================
-# GET ACTIVE CHAT
-# =========================
-chat = st.session_state.chats[st.session_state.active_chat]["messages"]
-
-
-# =========================
 # CHAT DISPLAY
 # =========================
 st.markdown('<div class="chat-box">', unsafe_allow_html=True)
@@ -196,7 +205,7 @@ prompt = st.chat_input("Message ChatGPT...")
 if prompt:
     chat.append({"role": "user", "content": prompt})
 
-    # AUTO TITLE UPDATE (ONLY FIRST USER MESSAGE)
+    # AUTO TITLE (FIRST MESSAGE ONLY)
     if st.session_state.chats[st.session_state.active_chat]["title"] == "New Chat":
         st.session_state.chats[st.session_state.active_chat]["title"] = generate_title(prompt)
 
@@ -206,7 +215,7 @@ if prompt:
 # =========================
 # AI RESPONSE
 # =========================
-if chat[-1]["role"] == "user":
+if chat and chat[-1]["role"] == "user":
 
     typing_placeholder = st.empty()
     typing_placeholder.markdown("🤖 **AI is typing...**")
