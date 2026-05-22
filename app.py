@@ -95,9 +95,7 @@ with st.sidebar:
     if st.button("Start Speaking"):
         recognizer = sr.Recognizer()
 
-        with sr.Microphone() as source:
-            st.info("Listening...")
-            audio = recognizer.listen(source)
+        st.warning("🎤 Voice input is not supported in Streamlit Cloud. Use local app for speech input.")
 
         try:
             text = recognizer.recognize_google(audio)
