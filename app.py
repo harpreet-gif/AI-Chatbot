@@ -6,6 +6,10 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
+if "INIT_DONE" not in st.session_state:
+    st.session_state.clear()
+    st.session_state["INIT_DONE"] = True
+
 # =========================
 # LOAD ENV
 # =========================
@@ -245,8 +249,8 @@ st.title("🤖 AI Chatbot")
 st.markdown('<div class="chat-box">', unsafe_allow_html=True)
 
 for msg in st.session_state.chats[st.session_state.active_chat]:
-    if msg["role"] == "system":
-        continue
+    if not isinstance(msg, dict) or msg.get("role") == "system":
+    continue
 
     if msg["role"] == "user":
         st.markdown(f"<div class='user-msg'>🧑 {msg['content']}</div>", unsafe_allow_html=True)
