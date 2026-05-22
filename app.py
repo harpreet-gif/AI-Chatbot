@@ -144,20 +144,24 @@ with st.sidebar:
 
 
 # =========================
-# CSS (UNCHANGED)
+# CSS (PREMIUM UI + THEMES)
 # =========================
 st.markdown(f"""
 <style>
+
+/* MAIN BACKGROUND */
 .main {{
     background-color: {'#0f172a' if st.session_state.theme == 'dark' else '#ffffff'};
 }}
 
+/* CHAT CONTAINER */
 .chat-box {{
     max-width: 800px;
     margin: auto;
     padding-bottom: 120px;
 }}
 
+/* USER BUBBLE (GRADIENT PREMIUM) */
 .user-msg {{
     background: linear-gradient(135deg, #60a5fa, #3b82f6, #2563eb);
     color: white;
@@ -165,11 +169,16 @@ st.markdown(f"""
     border-radius: 18px;
     margin: 10px 0;
     text-align: right;
+
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+    border: 1px solid rgba(255,255,255,0.2);
+
     max-width: 75%;
     float: right;
     clear: both;
 }}
 
+/* BOT BUBBLE (GLASS STYLE LIGHT) */
 .bot-msg {{
     background: linear-gradient(135deg, #f8fafc, #e2e8f0);
     color: #0f172a;
@@ -177,9 +186,41 @@ st.markdown(f"""
     border-radius: 18px;
     margin: 10px 0;
     text-align: left;
+
+    box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    border: 1px solid rgba(148,163,184,0.3);
+
     max-width: 75%;
     float: left;
     clear: both;
+}}
+
+/* DARK MODE OVERRIDES */
+{"""
+.user-msg {
+    background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+    color: white;
+}
+
+.bot-msg {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #e2e8f0;
+    border: 1px solid #334155;
+}
+""" if st.session_state.theme == "dark" else ""}
+
+/* SIDEBAR */
+section[data-testid="stSidebar"] {{
+    background-color: {'#111827' if st.session_state.theme == 'dark' else '#f8fafc'} !important;
+}}
+
+section[data-testid="stSidebar"] * {{
+    color: {'#ffffff' if st.session_state.theme == 'dark' else '#0f172a'} !important;
+}}
+
+section[data-testid="stSidebar"] button {{
+    background-color: {'#1f2937' if st.session_state.theme == 'dark' else '#e2e8f0'} !important;
+    color: {'#ffffff' if st.session_state.theme == 'dark' else '#0f172a'} !important;
 }}
 
 .chat-box::after {{
@@ -187,6 +228,7 @@ st.markdown(f"""
     display: block;
     clear: both;
 }}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -198,27 +240,18 @@ st.title("🤖 AI Chatbot")
 
 
 # =========================
-# CHAT DISPLAY (ONLY FIX ADDED HERE)
+# CHAT DISPLAY
 # =========================
 st.markdown('<div class="chat-box">', unsafe_allow_html=True)
 
 for msg in st.session_state.chats[st.session_state.active_chat]:
-
-    # ✅ FIX 1: ignore wrong types (prevents crash)
-    if not isinstance(msg, dict):
+    if msg["role"] == "system":
         continue
 
-    # ✅ FIX 2: safe access (prevents msg["role"] crash)
-    role = msg.get("role")
-    content = msg.get("content")
-
-    if role == "system":
-        continue
-
-    if role == "user":
-        st.markdown(f"<div class='user-msg'>🧑 {content}</div>", unsafe_allow_html=True)
+    if msg["role"] == "user":
+        st.markdown(f"<div class='user-msg'>🧑 {msg['content']}</div>", unsafe_allow_html=True)
     else:
-        st.markdown(f"<div class='bot-msg'>🤖 {content}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='bot-msg'>🤖 {msg['content']}</div>", unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -236,7 +269,7 @@ if prompt:
 
 
 # =========================
-# AI RESPONSE (UNCHANGED LOGIC)
+# AI RESPONSE (TYPING INDICATOR)
 # =========================
 if st.session_state.chats[st.session_state.active_chat][-1]["role"] == "user":
 
